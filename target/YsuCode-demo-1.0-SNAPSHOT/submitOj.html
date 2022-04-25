@@ -1,0 +1,138 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <link href="css/submitOj.css" rel="stylesheet" type="text/css"/>
+</head>
+<body>
+<div class="nav">
+    <ul class="menu">
+        <li class="lli"><a href="#" title="首页" target="_self">首页</a></li>
+        <li class="lli"><a href="#" title="项目" target="_blank">题库</a></li>
+        <li class="lli"><a href="#" title="论坛" target="_blank">论坛</a></li>
+        <li class="btn"><input id="search" type="search" placeholder="Search..." autofocus required/>
+            <button type="submit">Go</button>
+        </li><!--搜索框-->
+        <li class="image">
+            <img src="image/225默认头像(1).png" height="30px" alt=""/> | 用户名 &emsp;&emsp;
+            <a href="#">登录 | 注册</a>
+        </li>
+
+    </ul>
+</div>
+<br><br><br><br>
+<div class="container"><!--表格部分-->
+    <h2 id="QesName">Title</h2><br><br>
+    <h3>题目描述</h3><br>
+    <p id="QesDes" class="pi"></p><br>
+    <h3>测试样例</h3><br>
+    <p class="pi"></p><br>
+    <h3>输出样例</h3><br>
+    <p class="pi"></p><br>
+    <!--    <form style="height: 400px;">-->
+    <div id="mian">
+        <!--
+                <div id="leftBox"><textarea wrap="off" cols="2" id="leftNum" disabled></textarea></div>
+        -->
+        <textarea id="test" name="content" onkeyup="keyUp()"
+                  onscroll="getId('leftNum').scrollTop = this.scrollTop;"></textarea>
+    </div>
+    <br><br>
+    <button onclick="submitJava()"
+            style="left: 50%;background-color:deepskyblue;color: white; height: 30px; width: 70px; border-radius: 6px; border-style: none; cursor: pointer; ">
+        提交
+    </button>
+    <!--    </form>-->
+
+</div>
+
+<!--导入axios文件-->
+<script src="js/axios-0.18.0.js"></script>
+
+<script type="text/javascript"> //滚动条设置 目前已经删除了 没啥用
+var num = "";
+var test = getId('test');
+
+function getId(obj) {
+    return document.getElementById(obj);
+}
+
+function keyUp() {/*按键被释放时触发*/
+    var str = test.value;
+    str = str.replace(/\r/gi, "");
+    str = str.split("\n");
+    var n = str.length;
+    line(n);
+}
+
+function line(n) {
+    var lineobj = getId("leftNum");
+    for (var i = 1; i <= n; i++) {
+        if (document.all) {
+            num += i + "\r\n";//判断浏览器是否是IE
+        } else {
+            num += i + "\n";
+        }
+    }
+    lineobj.value = num;
+    num = "";
+}
+
+(function () {
+    keyUp();
+})();
+</script>
+
+<script>
+    function getId() { //获取当前题目的id
+        var result;
+        var url = window.location.search; //获取url中"?"符后的字串
+        if (url.indexOf("?") != -1) {
+            result = url.substr(url.indexOf("=") + 1);
+        }
+        return result;
+    }
+
+    window.onload = function () { //页面加载时显示题目的信息
+        axios({
+            method: "post",
+            url: "http://localhost:8080/YsuCode-demo/selectOneOfOjServlet",
+            data: "id=" + getId()
+        }).then(function (resp) {
+            let problem = resp.data;
+            //回显题目内容
+            document.getElementById("QesName").innerText = problem.title;
+            document.getElementById("QesDes").innerText = problem.description;
+            document.getElementById("test").value = problem.templateCode;
+        })
+    }
+
+    function submitJava() {
+        //转一下码 要不然+、=、&等特殊符号发不过去
+        var code = encodeURIComponent(document.getElementById("test").value);
+        axios({
+            method: "post",
+            url: "http://localhost:8080/YsuCode-demo/testJavaServlet",
+            data: "id=" + getId() + "&code=" + code
+        }).then(function (resp) {
+            var res = resp.data;
+            if (res == 666) { //题目正确
+                alert("答案正确");
+            } else if (res == 233) {
+                alert("答案错误");
+            } else if (res == 1) {
+                alert("编译错误");
+            } else if (res == 2) {
+                alert("运行错误");
+            } else {
+                alert("未知错误");
+            }
+
+        })
+    }
+
+</script>
+
+</body>
+</html>

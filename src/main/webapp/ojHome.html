@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <link href="css/ojHome.css" rel="stylesheet" type="text/css"/>
+</head>
+<body>
+<div class="nav">
+    <ul class="menu">
+        <li class="lli"><a href="#" target="_self">首页</a></li>
+        <li class="lli"><a href="#" target="_blank">题库</a></li>
+        <li class="lli"><a href="#" target="_blank">论坛</a></li>
+        <li class="lli"><a href="registerOj.html" title="出题系统" target="_blank">出题</a></li>
+        <li class="btn"><input id="search" type="search" placeholder="Search..." autofocus required/>
+            <button type="submit">Go</button>
+        </li><!--搜索框-->
+        <li class="image">
+            <img src="image/225默认头像(1).png" height="30px" alt=""/> | 用户名 &emsp;&emsp;
+            <a href="#">登录 | 注册</a>
+        </li>
+
+    </ul>
+</div>
+<div class="container"><!--表格部分-->
+    <br><br><br>
+    <h1 style=" font-family: '楷体';">题 库</h1>
+    <ul class="responsive-table" id="ojTable">
+        <!--                <li class="table-header">-->
+        <!--                    <div class="col col-1">题号</div>-->
+        <!--                    <div class="col col-2">题目</div>-->
+        <!--                    <div class="col col-3">类型</div>-->
+        <!--                    <div class="col col-4">考察范围</div>-->
+        <!--                </li>-->
+        <!--                <li class="table-row">-->
+        <!--                    <div class="col col-1">001</div>-->
+        <!--                    <div class="col col-2"><a href="" style="text-decoration: none; color: #000;">一数之和</a></div>-->
+        <!--                    <div class="col col-3">编程</div>-->
+        <!--                    <div class="col col-4">算数类型</div>-->
+        <!--                </li>-->
+    </ul>
+</div>
+<div class="page-normal">
+    <button><</button>&emsp;
+    <button>1</button>&emsp;
+    <button>2</button>&emsp;
+    <button>3</button>&emsp;
+    <button>></button>&emsp;
+
+</div>
+<!--导入axios文件-->
+<script src="js/axios-0.18.0.js"></script>
+<script>
+    //1.当页面加载完成后，发送ajax请求查询所有题目
+    window.onload = function () {
+        //2.发送ajax请求
+        axios({
+            method: "post",
+            url: "http://localhost:8080/YsuCode-demo/selectAllOjServlet",
+            data: ""
+        }).then(function (resp) {
+            //处理数据
+            let problems = resp.data; //获得题目的数组
+            let problemTable = "<li class=\"table-header\">\n" +
+                "            <div class=\"col col-1\">题号</div>\n" +
+                "            <div class=\"col col-2\">题目</div>\n" +
+                "            <div class=\"col col-3\">类型</div>\n" +
+                "            <div class=\"col col-4\">考察范围</div>\n" +
+                "        </li>"; //用累加法来存储题目 初始值是表头
+            for (let i = 0; i < problems.length; i++) {
+                let problem = problems[i];
+                problemTable += "<li class=\"table-row\">\n" +
+                    "            <div class=\"col col-1\">" + problem.id + "</div>\n" +
+                    "            <div class=\"col col-2\"><a href=\"#\" onclick=\"loadQuestion(" + problem.id + ")\" style=\"text-decoration: none; color: #000;\">" + problem.title + "</a></div>\n" +
+                    "            <div class=\"col col-3\">" + problem.level + "</div>\n" +
+                    "            <div class=\"col col-4\">" + problem.description + "</div>\n" +
+                    "        </li>";
+            }
+            document.getElementById("ojTable").innerHTML = problemTable;
+        })
+    }
+
+    function loadQuestion(id) { //点击题目名称时跳转到对应题目
+        to(id);
+    }
+
+    function to(id) { //传递id到submitOj.html
+        var getval = id;
+        window.location.href = "submitOj.html?value=" + getval;
+    }
+</script>
+<script>
+    var img = document.querySelector(".image").querySelectorAll("img");/*获取登录图片的元素*/
+    var btn = document.querySelector(".page-normal").querySelectorAll("button");/*获取页尾按钮*/
+</script>
+
+</body>
+</html>
