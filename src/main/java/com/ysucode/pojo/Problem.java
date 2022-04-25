@@ -8,6 +8,7 @@ public class Problem {
     private int hot_fix;
 
     private int master;
+    private int masetest;
 
     private int id;
 
