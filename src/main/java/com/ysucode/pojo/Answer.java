@@ -62,6 +62,8 @@ public class Answer {
 
     @Override
     public String toString() {
+        System.out.println("test01");
+        System.out.println("test02");
         int a = 0;
         int master = 0;
         int hotfix = 0;
