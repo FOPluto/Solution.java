@@ -5,6 +5,10 @@ package com.ysucode.pojo;
  */
 public class Problem {
 
+    private int hot_fix;
+
+    private int master;
+
     private int id;
 
     private String title;

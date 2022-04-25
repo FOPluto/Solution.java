@@ -63,6 +63,8 @@ public class Answer {
     @Override
     public String toString() {
         int a = 0;
+        int master = 0;
+        int hotfix = 0;
         return "Answer{" +
                 "error=" + error +
                 ", reason='" + reason + '\'' +
